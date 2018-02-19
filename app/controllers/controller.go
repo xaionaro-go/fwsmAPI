@@ -28,6 +28,24 @@ func (c Controller) noPerm() revel.Result {
 
 	return c.RenderJSON(c.ViewArgs)
 }
+func (c Controller) notFound() revel.Result {
+	c.ViewArgs["status"] = "ERROR"
+	c.ViewArgs["error_description"] = "Not found"
+
+	return c.RenderJSON(c.ViewArgs)
+}
+func (c Controller) notImplemented() revel.Result {
+	c.ViewArgs["status"] = "ERROR"
+	c.ViewArgs["error_description"] = "Not implemented, yet"
+
+	return c.RenderJSON(c.ViewArgs)
+}
+func (c Controller) invalidArgs() revel.Result {
+	c.ViewArgs["status"] = "ERROR"
+	c.ViewArgs["error_description"] = "Invalid arguments"
+
+	return c.RenderJSON(c.ViewArgs)
+}
 
 func (c *Controller) Redirect(url string) revel.Result {
 	return c.Controller.Redirect(url)

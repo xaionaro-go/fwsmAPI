@@ -7,6 +7,9 @@ import (
 	"github.com/revel/revel"
 	"github.com/xaionaro-go/fwsmAPI/app/common"
 	"github.com/xaionaro-go/fwsmConfig"
+	"github.com/xaionaro-go/networkControl"
+	linuxHost "github.com/xaionaro-go/networkControl/hosts/linux"
+	// FWSMHost "github.com/xaionaro-go/networkControl/hosts/fwsm"
 	"strings"
 	"os"
 )
@@ -23,6 +26,8 @@ var (
 	BuildTime string
 
 	FWSMConfig fwsmConfig.FwsmConfig
+
+	NetworkHosts networkControl.Hosts
 )
 
 func checkErr(err error) {
@@ -38,6 +43,17 @@ func ReadConfig() {
 	cfgReader := bufio.NewReader(file)
 	FWSMConfig, err = fwsmConfig.Parse(cfgReader)
 	checkErr(err)
+}
+
+func InitNetworkControl() {
+	NetworkHosts = append(NetworkHosts, linuxHost.NewHost(nil))
+	/*NetworkHosts = append(NetworkHosts, FWSMHost.NewHost(&FWSMHost.AccessDetails{
+			Host: "10.0.0.99",
+			Slot: 4,
+			Processor: 1,
+			EntryPassword: fwsmEntryPassword,
+			FWSMPassword:  fwsmFWSMPassword,
+		}))*/
 }
 
 func init() {
@@ -63,6 +79,7 @@ func init() {
 	// revel.OnAppStart(ExampleStartupScript)
 	// revel.OnAppStart(InitDB)
 	revel.OnAppStart(ReadConfig)
+	revel.OnAppStart(InitNetworkControl)
 }
 
 // HeaderFilter adds common security headers
