@@ -14,7 +14,7 @@ PUT	/fwsm/apply		FWSM.Apply
 PUT	/fwsm/revert		FWSM.Revert
 PUT	/fwsm/save		FWSM.Save
 GET	/fwsm/vlans		FWSM.GetVLANs
-GET	/fwsm/dhcps		FWSM.GetDHCPs
+#GET	/fwsm/dhcps		FWSM.GetDHCPs
 GET	/fwsm/routes		FWSM.GetRoutes
 GET	/fwsm/snats		FWSM.GetSNATs
 GET	/fwsm/dnats		FWSM.GetDNATs
@@ -28,21 +28,21 @@ Get	/fwsm/dnats/:dnat	FWSM.GetDNAT
 Get	/fwsm/acls/:acl		FWSM.GetACL
 
 DELETE	/fwsm/vlans/:vlans	FWSM.DeleteVLANs
-DELETE	/fwsm/dhcps/:dhcps	FWSM.DeleteDHCPs
+#DELETE	/fwsm/dhcps/:dhcps	FWSM.DeleteDHCPs
 DELETE	/fwsm/routes/:routes	FWSM.DeleteRoutes
 DELETE	/fwsm/snats/:snats	FWSM.DeleteSNATs
 DELETE	/fwsm/dnats/:dnats	FWSM.DeleteDNATs
 DELETE	/fwsm/acls/:acls	FWSM.DeleteACLs
 
 PUT	/fwsm/vlans/:vlan	FWSM.UpdateVLAN
-PUT	/fwsm/dhcps/:dhcp	FWSM.UpdateDHCP
+#PUT	/fwsm/dhcps/:dhcp	FWSM.UpdateDHCP
 PUT	/fwsm/routes/:route	FWSM.UpdateRoute
 PUT	/fwsm/snats/:snat	FWSM.UpdateSNAT
 PUT	/fwsm/dnats/:dnat	FWSM.UpdateDNAT
 PUT	/fwsm/acls/:acl		FWSM.UpdateACL
 
 POST	/fwsm/vlans/:vlan	FWSM.CreateVLAN
-POST	/fwsm/dhcps/:dhcp	FWSM.CreateDHCP
+#POST	/fwsm/dhcps/:dhcp	FWSM.CreateDHCP
 POST	/fwsm/routes/:route	FWSM.CreateRoute
 POST	/fwsm/snats/:snat	FWSM.CreateSNAT
 POST	/fwsm/dnats/:dnat	FWSM.CreateDNAT

@@ -112,38 +112,6 @@ func (c FWSM) GetDHCP() revel.Result {
 	return c.notImplemented()
 }
 
-func (c FWSM) DeleteDHCPs() revel.Result {
-	if !c.IsCanWrite() {
-		return c.noPerm()
-	}
-
-	return c.notImplemented()
-}
-
-func (c FWSM) UpdateDHCP() revel.Result {
-	if !c.IsCanWrite() {
-		return c.noPerm()
-	}
-
-	return c.notImplemented()
-}
-
-func (c FWSM) CreateDHCP() revel.Result {
-	if !c.IsCanWrite() {
-		return c.noPerm()
-	}
-
-	return c.notImplemented()
-}
-
-func (c FWSM) GetDHCPs() revel.Result {
-	if !c.IsCanRead() {
-		return c.noPerm()
-	}
-
-	return c.render(app.FWSMConfig.DHCPs)
-}
-
 // SNAT
 
 func (c FWSM) getSNAT() (fwsmConfig.SNAT, bool) {
