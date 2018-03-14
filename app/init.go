@@ -99,11 +99,14 @@ func InitNetworkControl() {
 		FWSMPassword:  fwsmFWSMPassword,
 	}))*/
 
-	NetworkHosts.SetLoggerDebug(log.New(&smartLogger{printf: revel.AppLog.Debugf}, "", 0))
-	NetworkHosts.SetLoggerInfo (log.New(&smartLogger{printf: revel.AppLog.Infof}, "", 0))
-	NetworkHosts.SetLoggerError(log.New(&smartLogger{printf: revel.AppLog.Errorf}, "", 0))
+	NetworkHosts.SetLoggerDebug  (log.New(&smartLogger{printf: revel.AppLog.Debugf}, "", 0))
+	NetworkHosts.SetLoggerInfo   (log.New(&smartLogger{printf: revel.AppLog.Infof}, "", 0))
+	NetworkHosts.SetLoggerWarning(log.New(&smartLogger{printf: revel.AppLog.Warnf}, "", 0))
+	NetworkHosts.SetLoggerError  (log.New(&smartLogger{printf: revel.AppLog.Errorf}, "", 0))
+	NetworkHosts.SetLoggerPanic  (log.New(&smartLogger{printf: revel.AppLog.Panicf}, "", 0))
 
 	RestoreNetworkFromDisk()
+	//NetworkHosts.RescanState() // it's already rescanned while restoring from the disk
 }
 
 func RestoreNetworkFromDisk() {
