@@ -100,16 +100,12 @@ func (c FWSM) GetVLANs() revel.Result {
 
 // DHCP
 
-func (c FWSM) getDHCP() (fwsmConfig.DHCP, bool) {
-	return fwsmConfig.DHCP{}, false
-}
-
 func (c FWSM) GetDHCP() revel.Result {
 	if !c.IsCanRead() {
 		return c.noPerm()
 	}
 
-	return c.notImplemented()
+	return c.render(app.FWSMConfig.DHCP)
 }
 
 // SNAT
