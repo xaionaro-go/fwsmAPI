@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"github.com/revel/revel"
 	"github.com/xaionaro-go/fwsmAPI/app"
+	"github.com/xaionaro-go/fwsmAPI/app/common"
 	"github.com/xaionaro-go/fwsmAPI/app/helpers"
 	"github.com/xaionaro-go/fwsmConfig"
 	"strings"
@@ -20,7 +21,7 @@ func (c FWSM) GetConfiguration() revel.Result {
 		return c.noPerm()
 	}
 
-	return c.render(app.FWSMConfig)
+	return c.render(common.FWSMConfig)
 }
 
 // VLAN
@@ -29,7 +30,7 @@ func (c FWSM) getVLAN() (fwsmConfig.VLAN, bool) {
 	var vlanId int
 	c.Params.Bind(&vlanId, "vlan")
 
-	return app.FWSMConfig.VLANs.Find(vlanId)
+	return common.FWSMConfig.VLANs.Find(vlanId)
 }
 
 func (c FWSM) GetVLAN() revel.Result {
@@ -65,7 +66,7 @@ func (c FWSM) DeleteVLANs() revel.Result {
 		return c.invalidArgs()
 	}
 
-	err = app.FWSMConfig.VLANs.Remove(app.NetworkHosts, vlanIds...)
+	err = common.FWSMConfig.VLANs.Remove(app.NetworkHosts, vlanIds...)
 	if err != nil {
 		revel.AppLog.Errorf("Got an error: %v", err.Error())
 		return c.error("Got an error while communicating with network hosts")
@@ -95,7 +96,7 @@ func (c FWSM) GetVLANs() revel.Result {
 		return c.noPerm()
 	}
 
-	return c.render(app.FWSMConfig.VLANs)
+	return c.render(common.FWSMConfig.VLANs)
 }
 
 // DHCP
@@ -105,7 +106,7 @@ func (c FWSM) GetDHCP() revel.Result {
 		return c.noPerm()
 	}
 
-	return c.render(app.FWSMConfig.DHCP)
+	return c.render(common.FWSMConfig.DHCP)
 }
 
 // SNAT
@@ -151,7 +152,7 @@ func (c FWSM) GetSNATs() revel.Result {
 		return c.noPerm()
 	}
 
-	return c.render(app.FWSMConfig.SNATs)
+	return c.render(common.FWSMConfig.SNATs)
 }
 
 // DNAT
@@ -197,7 +198,7 @@ func (c FWSM) GetDNATs() revel.Result {
 		return c.noPerm()
 	}
 
-	return c.render(app.FWSMConfig.DNATs)
+	return c.render(common.FWSMConfig.DNATs)
 }
 
 // Route
@@ -243,7 +244,7 @@ func (c FWSM) GetRoutes() revel.Result {
 		return c.noPerm()
 	}
 
-	return c.render(app.FWSMConfig.Routes)
+	return c.render(common.FWSMConfig.Routes)
 }
 
 // ACL
@@ -289,7 +290,7 @@ func (c FWSM) GetACLs() revel.Result {
 		return c.noPerm()
 	}
 
-	return c.render(app.FWSMConfig.ACLs)
+	return c.render(common.FWSMConfig.ACLs)
 }
 
 // The rest
@@ -360,17 +361,30 @@ func (c FWSM) GetStatus() revel.Result {
 	return c.render(bwmRows)
 }
 
+func (c FWSM) Reload() revel.Result {
+	if !c.IsCanWrite() {
+		return c.noPerm()
+	}
+
+	err := common.ReadConfig()
+	if err != nil {
+		revel.AppLog.Errorf("Got an error: %v", err.Error())
+		return c.render("Internal error")
+	}
+	return c.render(common.FWSMConfig)
+}
+
 func (c FWSM) Apply() revel.Result {
 	if !c.IsCanWrite() {
 		return c.noPerm()
 	}
 
-	err := app.FWSMConfig.Apply(app.NetworkHosts)
+	err := common.FWSMConfig.Apply(app.NetworkHosts)
 	if err != nil {
 		revel.AppLog.Errorf("Got an error: %v", err.Error())
 		return c.render("Internal error")
 	}
-	return c.render(app.FWSMConfig)
+	return c.render(common.FWSMConfig)
 }
 
 func (c FWSM) Revert() revel.Result {
@@ -378,12 +392,12 @@ func (c FWSM) Revert() revel.Result {
 		return c.noPerm()
 	}
 
-	err := app.FWSMConfig.Revert(app.NetworkHosts)
+	err := common.FWSMConfig.Revert(app.NetworkHosts)
 	if err != nil {
 		revel.AppLog.Errorf("Got an error: %v", err.Error())
 		return c.render("Internal error")
 	}
-	return c.render(app.FWSMConfig)
+	return c.render(common.FWSMConfig)
 }
 
 func (c FWSM) Save() revel.Result {
@@ -391,12 +405,12 @@ func (c FWSM) Save() revel.Result {
 		return c.noPerm()
 	}
 
-	err := app.FWSMConfig.Save(app.NetworkHosts, "/root/fwsm-config/dynamic")
+	err := common.FWSMConfig.Save(app.NetworkHosts, "/root/fwsm-config/dynamic")
 	if err != nil {
 		revel.AppLog.Errorf("Got an error: %v", err.Error())
 		return c.render("Internal error")
 	}
-	return c.render(app.FWSMConfig)
+	return c.render(common.FWSMConfig)
 }
 
 

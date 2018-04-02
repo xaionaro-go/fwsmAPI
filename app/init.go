@@ -1,23 +1,20 @@
 package app
 
 import (
-	"bufio"
 	"fmt"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/revel/revel"
 	"github.com/xaionaro-go/fwsmAPI/app/common"
-	"github.com/xaionaro-go/fwsmConfig"
 	"github.com/xaionaro-go/networkControl"
 	linuxHost "github.com/xaionaro-go/networkControl/hosts/linux"
 	"log"
 	// FWSMHost "github.com/xaionaro-go/networkControl/hosts/fwsm"
-	"os"
+	"os/exec"
 	"runtime"
 	"strings"
 )
 
 const (
-	FWSM_CONFIG_PATH = "/root/fwsm-config/dynamic"
 	SMART_LOGGER_TRACEBACK_DEPTH int = 10
 )
 
@@ -27,8 +24,6 @@ var (
 
 	// BuildTime revel app build-time (ldflags)
 	BuildTime string
-
-	FWSMConfig fwsmConfig.FwsmConfig
 
 	NetworkHosts networkControl.Hosts
 )
@@ -40,12 +35,8 @@ func checkErr(err error) {
 }
 
 func ReadConfig() {
-	file, err := os.Open(FWSM_CONFIG_PATH)
-	checkErr(err)
-	defer file.Close()
-	cfgReader := bufio.NewReader(file)
-	FWSMConfig, err = fwsmConfig.Parse(cfgReader)
-	checkErr(err)
+	exec.Command("git", "-C", common.FWSM_CONFIG_PATH, "stash").Run()
+	checkErr(common.ReadConfig())
 }
 
 type smartLogger struct {

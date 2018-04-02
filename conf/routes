@@ -10,6 +10,7 @@ module:testrunner
 GET	/	 		App.Index
 GET	/fwsm/status		FWSM.GetStatus
 GET	/fwsm/config		FWSM.GetConfiguration
+PUT	/fwsm/reload		FWSM.Reload
 PUT	/fwsm/apply		FWSM.Apply
 PUT	/fwsm/revert		FWSM.Revert
 PUT	/fwsm/save		FWSM.Save
