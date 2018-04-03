@@ -31,7 +31,7 @@ type MswfAPIClientNewArgs struct {
 	Scheme string
 }
 
-func New(args *mswfAPIClientNewArgs) *MswfAPIClient {
+func New(args *MswfAPIClientNewArgs) *MswfAPIClient {
 	if args == nil {
 		return &MswfAPIClient{}
 	}
