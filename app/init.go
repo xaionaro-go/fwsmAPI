@@ -1,6 +1,9 @@
 package app
 
 import (
+	"crypto/sha1"
+	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/revel/revel"
@@ -27,6 +30,43 @@ var (
 
 	NetworkHosts networkControl.Hosts
 )
+
+func CheckLoginPass(login, pass string) bool {
+	sha1HashBytes := sha1.Sum([]byte(pass))
+	sha1Hash := hex.EncodeToString(sha1HashBytes[:])
+	for i := 0; true; i++ {
+		cfgKey := fmt.Sprintf("user%v.login", i)
+		loginCheck, ok := revel.Config.String(cfgKey)
+		if !ok {
+			revel.AppLog.Debug("there's no configuration option", cfgKey)
+			break
+		}
+		if login != loginCheck {
+			revel.AppLog.Debug("login check: ", login, "<>", loginCheck)
+			continue
+		}
+		sha1HashCheck, ok := revel.Config.String(fmt.Sprintf("user%v.password_sha1", i))
+		if !ok {
+			var passCheck string
+			passCheck, ok = revel.Config.String(fmt.Sprintf("user%v.password", i))
+			sha1HashBytesCheck := sha1.Sum([]byte(passCheck))
+			sha1HashCheck = hex.EncodeToString(sha1HashBytesCheck[:])
+		}
+		if !ok {
+			revel.AppLog.Errorf("Shouldn't happened")
+			continue
+		}
+		if sha1Hash != sha1HashCheck {
+			revel.AppLog.Debugf("sha1 check failed: %v: %v %v %v %v", login, len(sha1Hash), len(sha1HashCheck), sha1Hash, sha1HashCheck)
+			continue
+		}
+
+		revel.AppLog.Infof("Authed as %v", login)
+		return true
+	}
+
+	return false
+}
 
 func checkErr(err error) {
 	if err != nil {
@@ -155,11 +195,23 @@ func tryParseJWT(c *revel.Controller) {
 	if tokenString == "" {
 		authString := c.Request.GetHttpHeader("Authorization")
 		if !strings.HasPrefix(tokenString, "Basic ") {
-			if authString == "Basic eGFpb25hcm86bW9ydGU=" {
-				revel.AppLog.Info("debug auth")
-				c.ViewArgs["me"] = common.UserInfo{"xaionaro-admin", true, true}
-				return
+			words := strings.Split(authString, " ")
+			if len(words) >= 2 {
+				loginPassEncoded := words[1]
+				loginPass, err := base64.StdEncoding.DecodeString(loginPassEncoded)
+				if err != nil {
+					revel.AppLog.Errorf("Cannot decode base64 string: \"%v\": %v", loginPassEncoded, err.Error())
+					return
+				}
+				loginPassWords := strings.Split(string(loginPass), ":") // TODO: consider character ":" in the password
+
+				if len(loginPassWords) >= 2 {
+					if CheckLoginPass(loginPassWords[0], loginPassWords[1]) {
+						c.ViewArgs["me"] = common.UserInfo{loginPassWords[0], true, true}
+					}
+				}
 			}
+			return
 		}
 
 		tokenString := authString

@@ -8,7 +8,9 @@ import (
 	"github.com/xaionaro-go/fwsmAPI/app/common"
 	"github.com/xaionaro-go/fwsmAPI/app/helpers"
 	"github.com/xaionaro-go/fwsmConfig"
+//	"runtime/pprof"
 	"strings"
+//	"os"
 	"os/exec"
 )
 
@@ -378,6 +380,14 @@ func (c FWSM) Apply() revel.Result {
 	if !c.IsCanWrite() {
 		return c.noPerm()
 	}
+	/*{
+		f, err := os.Create("/tmp/fwsm-apply.pprof")
+		if err != nil {
+			panic(err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}*/
 
 	err := common.FWSMConfig.Apply(app.NetworkHosts)
 	if err != nil {

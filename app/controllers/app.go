@@ -1,11 +1,9 @@
 package controllers
 
 import (
-	"crypto/sha1"
-	"encoding/hex"
-	"fmt"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/revel/revel"
+	"github.com/xaionaro-go/fwsmAPI/app"
 	"github.com/xaionaro-go/fwsmAPI/app/common"
 	"strings"
 )
@@ -67,32 +65,9 @@ func (c App) AuthJWT() revel.Result {
 	if login == "" {
 		return c.error("empty \"login\" is passed")
 	}
-	sha1HashBytes := sha1.Sum([]byte(password))
-	sha1Hash := hex.EncodeToString(sha1HashBytes[:])
-	for i := 0; true; i++ {
-		cfgKey := fmt.Sprintf("user%v.login", i)
-		loginCheck, ok := revel.Config.String(cfgKey)
-		if !ok {
-			revel.AppLog.Debug("there's no configuration option", cfgKey)
-			break
-		}
-		if login != loginCheck {
-			revel.AppLog.Debug("login check: ", login, "<>", loginCheck)
-			continue
-		}
-		sha1HashCheck, ok := revel.Config.String(fmt.Sprintf("user%v.password_sha1", i))
-		if !ok {
-			revel.AppLog.Errorf("Shouldn't happened")
-			continue
-		}
-		if sha1Hash != sha1HashCheck {
-			revel.AppLog.Debugf("sha1 check failed: %v: %v %v %v %v", login, len(sha1Hash), len(sha1HashCheck), sha1Hash, sha1HashCheck)
-			continue
-		}
 
-		revel.AppLog.Infof("Authed as %v", login)
+	if app.CheckLoginPass(login, password) {
 		return c.sendJWT(login)
 	}
-
 	return c.error("invalid login/password")
 }
