@@ -1,4 +1,4 @@
-package fwsmAPIClient
+package mswfAPIClient
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ var (
 	ErrNotImplemented = fmt.Errorf("Not implemented (yet?)")
 )
 
-type FwsmAPIClient struct {
+type MswfAPIClient struct {
 	httpClient *http.Client
 
 	host string
@@ -22,7 +22,7 @@ type FwsmAPIClient struct {
 	scheme string
 }
 
-type FwsmAPIClientNewArgs struct {
+type MswfAPIClientNewArgs struct {
 	Host string
 	Port int
 	User string
@@ -31,16 +31,16 @@ type FwsmAPIClientNewArgs struct {
 	Scheme string
 }
 
-func New(args *FwsmAPIClientNewArgs) *FwsmAPIClient {
+func New(args *mswfAPIClientNewArgs) *MswfAPIClient {
 	if args == nil {
-		return &FwsmAPIClient{}
+		return &MswfAPIClient{}
 	}
 
 	if args.Scheme == "" {
 		args.Scheme = "http"
 	}
 
-	return &FwsmAPIClient{
+	return &MswfAPIClient{
 		httpClient: &http.Client{
 		},
 		host: args.Host,
@@ -68,7 +68,7 @@ func parseError(body string) error {
 	return nil
 }
 
-func (c *FwsmAPIClient) writeRequest(method, uri string) error {
+func (c *MswfAPIClient) writeRequest(method, uri string) error {
 	body, err := c.request(method, uri)
 	if err != nil {
 		return err
@@ -76,15 +76,15 @@ func (c *FwsmAPIClient) writeRequest(method, uri string) error {
 	return parseError(body)
 }
 
-func (c *FwsmAPIClient) Reload() error {
+func (c *MswfAPIClient) Reload() error {
 	return c.writeRequest("PUT", "fwsm/reload")
 }
 
-func (c *FwsmAPIClient) Apply() error {
+func (c *MswfAPIClient) Apply() error {
 	return c.writeRequest("PUT", "fwsm/apply")
 }
 
-func (c *FwsmAPIClient) readRequest(uri string) (string, error) {
+func (c *MswfAPIClient) readRequest(uri string) (string, error) {
 	body, err := c.request("GET", uri)
 	if err != nil {
 		return string(body), err
@@ -93,12 +93,12 @@ func (c *FwsmAPIClient) readRequest(uri string) (string, error) {
 	return string(body), err
 }
 
-func (c *FwsmAPIClient) CheckConnection() error {
+func (c *MswfAPIClient) CheckConnection() error {
 	_, err := c.readRequest("fwsm/config")
 	return err
 }
 
-func (c *FwsmAPIClient) request(method, uri string) (string, error) {
+func (c *MswfAPIClient) request(method, uri string) (string, error) {
 	req, err := http.NewRequest(method, c.scheme+"://"+c.host+"/"+uri, nil)
 	if err != nil {
 		return "", err
