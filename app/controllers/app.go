@@ -3,8 +3,8 @@ package controllers
 import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/revel/revel"
-	"github.com/xaionaro-go/fwsmAPI/app"
-	"github.com/xaionaro-go/fwsmAPI/app/common"
+	"github.com/xaionaro-go/mswfAPI/app"
+	"github.com/xaionaro-go/mswfAPI/app/common"
 	"strings"
 )
 

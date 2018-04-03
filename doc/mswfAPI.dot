@@ -1,0 +1,31 @@
+digraph mswfAPI {
+	label="mswfAPI is a JSON REST API server to control MSWF host"
+
+	subgraph cluster_mswf_host {
+		graph[style=dotted label="MSWF host (Linux server)"];
+		fwsmConfigFile[shape=note label="/root/fwsm-config/dynamic"]
+		netfilter [shape=invhouse]
+		iproute2 [shape=invhouse]
+		iscDhcpServer [shape=invhouse label="isc-dhcp-server"]
+
+		mswfShell -> mswfAPI [style=dotted]
+		mswfWebControl -> mswfAPI [style=dotted]
+		mswfAPI -> fwsmConfig [dir=both]
+		fwsmConfig -> fwsmConfigFile [style=dotted dir=both]
+		mswfAPI -> networkControl
+		networkControl -> netfilter [style=dotted]
+		networkControl -> iproute2 [style=dotted]
+		networkControl -> iscDhcp
+		iscDhcp -> iscDhcpServer [style=dotted]
+	}
+	subgraph cluster_fwsm {
+		graph[style=dotted label="real FWSM\n(for a fallback)"];
+		FWSM_telnet[label="telnet"]
+	}
+
+	networkControl -> FWSM_telnet [style=dotted]
+
+	ssh -> mswfShell [style=dotted]
+	http -> mswfWebControl [style=dotted]
+}
+

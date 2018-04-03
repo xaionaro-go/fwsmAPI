@@ -5,7 +5,7 @@ package controllers
 import (
 	"fmt"
 	"github.com/revel/revel"
-	"github.com/xaionaro-go/fwsmAPI/app/common"
+	"github.com/xaionaro-go/mswfAPI/app/common"
 )
 
 type Controller struct {

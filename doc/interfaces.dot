@@ -1,0 +1,19 @@
+digraph MSWF {
+	label="MSWF — a replacement for FWSM-like devices"
+
+	subgraph cluster_linux_server {
+		graph[style=dotted label="Linux server"];
+		mswfShell
+		mswfAPI
+		mswfWebControl
+		fwsmConfigFile[shape=note label="/root/fwsm-config/dynamic"]
+
+		mswfShell -> mswfAPI
+		mswfWebControl -> mswfAPI
+		mswfAPI -> fwsmConfigFile
+	}
+
+	ssh -> mswfShell
+	http -> mswfWebControl
+}
+

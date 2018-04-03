@@ -1,0 +1,33 @@
+digraph files {
+	label="special files"
+
+	fwsmConfigFile [shape=note label="/root/fwsm-config/dynamic"]
+	fwsmConfigGit [shape=folder label="/root/fwsm-config/.git/"]
+	scriptsDir [shape=folder label="/root/fwsm-config/linux/"]
+	mswfAPIClientConfigFile [shape=note label="/etc/mswf-api-client.json"]
+	mswfAPIConfigFile [shape=note label="/root/go/src/github.com/xaionaro-go/mswfAPI/conf/app.conf"]
+	routesFile [shape=note label="/etc/iproute.routes"]
+	routesRulesFile [shape=note label="/etc/iproute.rules"]
+	iptablesRulesFile [shape=note label="/etc/iptables/fwsm.rules"]
+	networkControlCfg [shape=note label="/etc/networkControl.json"]
+	dhcpConfigFile [shape=note label="/etc/dhcp/dhcpd-dynamic.conf"]
+
+	mswfShell -> mswfAPIClientConfigFile
+	mswfShell -> mswfAPI
+	mswfShell -> fwsmConfigFile
+	mswfShell -> fwsmConfigGit
+	mswfWebControl -> mswfAPI
+	mswfAPI -> fwsmConfig
+	fwsmConfig -> fwsmConfigFile
+	fwsmConfig -> fwsmConfigGit
+	mswfAPI -> networkControl
+	mswfAPI -> mswfAPIConfigFile
+	networkControl -> scriptsDir
+	networkControl -> routesFile
+	networkControl -> routesRulesFile
+	networkControl -> iptablesRulesFile
+	networkControl -> networkControlCfg
+	networkControl -> iscDhcp
+	iscDhcp -> dhcpConfigFile
+}
+
